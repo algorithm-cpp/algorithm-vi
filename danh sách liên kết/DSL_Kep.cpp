@@ -1,0 +1,232 @@
+#include <iostream>
+#include <algorithm>
+#include <stdlib.h>
+using namespace std;
+struct Node{
+	int data;
+	Node *next=NULL;
+	Node *prev=NULL;
+};
+
+class List{
+	private:
+		Node *root=NULL;
+		Node *end=NULL;
+		int length=0;
+	public:
+		Node *makeNode(int data){
+			Node *temp=new Node;
+			temp->data =data;
+			return temp;
+		}
+		
+		void addFirst(int data){
+			Node *temp=makeNode(data);
+			if(root==NULL){
+				root=temp;
+				end=temp;
+				length++;
+				return;
+			}
+			temp->next=root;
+			root->prev=temp;
+			root=temp;
+			length++;
+		}
+		
+		void add(int data){
+			Node *temp=makeNode(data);
+			if(root==NULL){
+				root=temp;
+				end=temp;
+				length++;
+				return;
+			}
+			end->next=temp;
+			temp->prev= end;
+			end=temp;
+			length++;
+		}
+		
+		void addPos(int data, int pos){
+			Node *temp= makeNode(data);
+			if(pos< 0 || pos > length){
+				cout<<"Can't add "<<data<<endl;
+				return;
+			}
+			if(pos==0){
+				addFirst(data);
+				return;
+			}
+			if(pos==length){
+				add(data);
+				return;
+			}
+			int i=0;
+			Node *start= root, *front;
+			while(i< pos){
+				front= start;
+				start=start->next;
+				i++;
+			}
+			front->next= temp;
+			temp->next= start;
+			temp->prev=front;
+			start->prev=temp;
+			length++;
+		}
+		
+		void remove(int pos){
+			if(pos < 0 || pos >= length){
+				cout<<"Can't remove"<<endl;
+				return;
+			}
+			int i=0;
+			Node *start=root, *front;
+			while(i<pos){
+				front=start;
+				start=start->next;
+				i++;
+			}
+			if(pos==0){
+				root=root->next;
+				root->prev= NULL;
+				length--;
+				return;
+			}
+			if(pos==length-1){
+				end=front;
+				end->next=NULL;
+				length--;
+				return;
+			}
+			front->next= start->next;
+			start->next->prev=front;
+			length--;
+		}
+		
+		Node *find(int data){
+			Node *start= root;
+			int i=0;
+			while(i<length){
+				if(start->data == data){
+					return start;
+				}
+				start=start->next;
+				i++;
+			}
+			return NULL;
+		}
+		
+		void read(){
+			if(root==NULL) cout<<"NULL"<<endl;
+			Node *start=root;
+			int i=0;
+			while(i<length){
+				cout<<start->data<<" ";
+				start=start->next;
+				i++;
+			}
+		}
+		int *toArray(){
+			if(root==NULL) return NULL;
+			int *a=new int[length];
+			Node *start=root;
+			int i=0;
+			while(i<length){
+				a[i++]=start->data;
+				start=start->next;
+			}
+			return a;
+		}
+		void Sort(){
+			if(root==NULL) return;
+			int *a=toArray();
+			int i=0;
+			sort(a,a+length);
+			Node *start=root;
+			while(i<length){
+				start->data=a[i++];
+				start=start->next;
+			}
+		}
+		
+		void rev(){
+			if(root==NULL) return;
+			int *a=toArray();
+			int i=0;
+			Node *start=root;
+			while(i<length){
+				start->data=a[length-i-1];
+				i++;
+				start=start->next;
+			}
+		}
+};
+
+List a;
+void menu(){
+	while(true){
+		int key;
+		cout<<endl<<"1. Them vao list"<<endl;
+		cout<<"2. Xoa bo node "<<endl;
+		cout<<"3. Tim kiem node"<<endl;
+		cout<<"4. In ra danh sach"<<endl;
+		cout<<"5. Sap xep danh sach"<<endl;
+		cout<<"6. Dao nguoc danh sach"<<endl;
+		cout<<"7. Exit";
+		cout<<endl<<"Chon: ";
+		cin>>key;
+		switch(key){
+			case 1:{
+				system("cls");
+				int data, pos;
+				cout<<"Nhap phan tu can them"<<endl;
+				cin>>data;
+				cout<<"Nhap vi tri"<<endl;
+				cin>>pos;
+				a.addPos(data, pos);
+				break;
+			}
+			case 2:{
+				system("cls");
+				int pos;
+				cout<<"Nhap vi tri can xoa"<<endl;
+				cin>>pos;
+				a.remove(pos);
+				break;
+			}
+			case 3:{
+				system("cls");
+				int data;
+				cout<<"Nhap node can tim"<<endl;
+				cin>>data;
+				Node *temp=a.find(data);
+				if(temp==NULL) cout<<"Khong co node can tim"<<endl;
+				else cout<<"Node can tim co dia chi o nho: "<<temp;
+				break;
+			}
+			case 4:{
+				system("cls");
+				cout<<"Danh sach"<<endl;
+				a.read();
+				break;
+			}
+			case 5:{
+				system("cls");
+				a.Sort();
+				cout<<"Sap xep thanh cong!"<<endl;
+				break;
+			}
+			case 6:{
+				system("cls");
+				a.rev();
+				cout<<"Dao nguoc danh sach thanh cong"<<endl;
+				break;
+			}
+		}
+	}
+}
+main(){
+	menu();
+}
